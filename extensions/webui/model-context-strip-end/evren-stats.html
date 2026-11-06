@@ -1,0 +1,40 @@
+<div class="dropdown" x-data="{ open: false }" @click.outside="open = false">
+  <button type="button" class="dropdown-trigger" @click="open = !open; if(open) $store.evrenStore.refreshQuota($store.pluginSettingsStore?.config?.api_key)"
+          :aria-expanded="open" data-overflow-label="EVREN">
+    <x-icon name="speed" aria-hidden="true"></x-icon>
+    <span x-text="$store.evrenStore.quota ? ($store.evrenStore.dailyPercent + '%') : 'EVREN'"></span>
+  </button>
+  <div class="dropdown-menu" x-show="open"
+       style="display: none; top: auto; bottom: 100%; min-width: 220px; padding: 12px;">
+    <template x-if="$store.evrenStore.quota">
+      <div class="flex flex-col gap-2 text-xs">
+        <div class="font-semibold text-sm">EVREN Usage</div>
+        <div>
+          <div class="flex justify-between mb-1">
+            <span>Daily tokens</span>
+            <span><b x-text="$store.evrenStore.dailyUsed"></b> / <span x-text="$store.evrenStore.dailyLimit"></span></span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-1.5">
+            <div class="bg-blue-600 h-1.5 rounded-full"
+                 :style="'width:' + $store.evrenStore.dailyPercent + '%'"></div>
+          </div>
+        </div>
+        <div class="flex justify-between">
+          <span>Remaining</span>
+          <b x-text="$store.evrenStore.dailyRemaining"></b>
+        </div>
+        <div class="flex justify-between">
+          <span>Credits</span>
+          <b x-text="$store.evrenStore.creditsRemaining + ' CR'"></b>
+        </div>
+        <div class="flex justify-between opacity-60">
+          <span>Reset</span>
+          <span x-text="$store.evrenStore.dailyReset"></span>
+        </div>
+      </div>
+    </template>
+    <template x-if="!$store.evrenStore.quota">
+      <div class="text-xs opacity-70">Set your API key in Settings → EVREN LLM</div>
+    </template>
+  </div>
+</div>

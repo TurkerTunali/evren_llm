@@ -1,0 +1,17 @@
+chat:
+  evren:
+    name: EVREN AI (Free for Türkiye)
+    litellm_provider: openai
+    api_key_mode: required
+    models_list:
+      models:
+        - model_name: deepseek-v4.1-flash
+        - model_name: glm-5.3
+        - model_name: mimo-v2.6-pro
+        - model_name: qwen3.8-flash-next
+        - model_name: gemma-4-31b
+        - model_name: qwen3-vl-30b
+        - model_name: auto
+    kwargs:
+      api_base: "https://evren-llmapi.ssyz.org.tr/v1"
+      max_tokens: 4096

@@ -1,0 +1,101 @@
+<html>
+<head>
+  <title>EVREN LLM Settings</title>
+  <script type="module" src="/plugins/evren_llm/webui/evren-store.js"></script>
+</head>
+<body>
+  <div x-data>
+    <template x-if="$store.evrenStore">
+      <div class="flex flex-col gap-4" x-init="$store.evrenStore.onOpen(config.api_key)">
+
+        <div>
+          <h2 class="text-lg font-semibold">EVREN AI — API Key & Credits</h2>
+          <p class="text-sm opacity-70">
+            EVREN gives free AI credits to Turkish citizens. Get your key at
+            <a href="https://evren.ssyz.org.tr" target="_blank" class="underline">evren.ssyz.org.tr</a>.
+          </p>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label class="text-sm font-medium" for="evren_api_key">API Key</label>
+          <input id="evren_api_key" type="password" x-model="config.api_key"
+                 placeholder="evren_llm_..." class="border rounded px-3 py-2" />
+          <p class="text-xs opacity-60">Your key is stored locally and sent only to EVREN.</p>
+        </div>
+
+        <button class="bg-blue-600 text-white rounded px-4 py-2 w-fit disabled:opacity-50"
+                :disabled="$store.evrenStore.loading"
+                @click="$store.evrenStore.refresh(config.api_key)">
+          <span x-show="!$store.evrenStore.loading">Save &amp; Test</span>
+          <span x-show="$store.evrenStore.loading">Testing...</span>
+        </button>
+
+        <!-- Connection status -->
+        <template x-if="$store.evrenStore.connected === true">
+          <div class="rounded p-3 bg-green-50 text-green-900">
+            <p class="text-sm font-medium">Connected</p>
+            <p class="text-xs">Models available: <span x-text="$store.evrenStore.models"></span></p>
+          </div>
+        </template>
+
+        <template x-if="$store.evrenStore.connected === false">
+          <div class="rounded p-3 bg-red-50 text-red-900">
+            <p class="text-sm font-medium">Connection failed</p>
+            <p class="text-xs">Check your API key at evren.ssyz.org.tr</p>
+          </div>
+        </template>
+
+        <!-- Terms accept (one-time) -->
+        <template x-if="$store.evrenStore.needsTerms">
+          <div class="rounded p-3 bg-yellow-50 text-yellow-900 flex flex-col gap-2">
+            <p class="text-sm font-medium">Terms acceptance required (one-time)</p>
+            <button class="bg-yellow-600 text-white rounded px-4 py-2 w-fit"
+                    @click="$store.evrenStore.acceptTerms(config.api_key, $store.evrenStore.terms.current_version)">
+              Accept Terms v<span x-text="$store.evrenStore.terms.current_version"></span>
+            </button>
+          </div>
+        </template>
+
+        <!-- Usage & credits -->
+        <template x-if="$store.evrenStore.quota">
+          <div class="rounded p-3 border">
+            <h3 class="text-sm font-semibold mb-2">Usage &amp; Credits</h3>
+
+            <div class="flex flex-col gap-2">
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span>Daily tokens</span>
+                  <span><b x-text="$store.evrenStore.dailyUsed"></b> / <span x-text="$store.evrenStore.dailyLimit"></span></span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="bg-blue-600 h-2 rounded-full"
+                       :style="'width:' + $store.evrenStore.dailyPercent + '%'"></div>
+                </div>
+                <p class="text-xs opacity-60 mt-1">Remaining: <span x-text="$store.evrenStore.dailyRemaining"></span> tokens</p>
+              </div>
+
+              <div>
+                <div class="flex justify-between text-xs mb-1">
+                  <span>5-minute window</span>
+                  <span x-text="$store.evrenStore.windowPercent + '%'"></span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="bg-teal-600 h-2 rounded-full"
+                       :style="'width:' + $store.evrenStore.windowPercent + '%'"></div>
+                </div>
+              </div>
+
+              <div class="flex justify-between text-sm pt-1">
+                <span>Credits remaining</span>
+                <b x-text="$store.evrenStore.creditsRemaining + ' CR'"></b>
+              </div>
+              <p class="text-xs opacity-60">Daily reset: <span x-text="$store.evrenStore.dailyReset"></span></p>
+            </div>
+          </div>
+        </template>
+
+      </div>
+    </template>
+  </div>
+</body>
+</html>
